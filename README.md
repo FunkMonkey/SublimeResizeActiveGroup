@@ -1,7 +1,7 @@
 SublimeResizeActiveGroup
 ========================
 
-Sublime Plugin for resizing the active group when the user switches groups.
+Sublime Plugin for resizing the active layout group when the user switches groups. Resize the groups once as usual using the sliders. Whenever you activate a different group now, the selected group will be resized to have the most space.
 
 It currently works with the following layouts:
 * Rows: 2

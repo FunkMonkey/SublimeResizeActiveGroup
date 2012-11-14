@@ -1,4 +1,5 @@
 import sublime_plugin
+from copy import deepcopy
 
 
 class ResizeActiveGroup(sublime_plugin.EventListener):
@@ -9,21 +10,22 @@ class ResizeActiveGroup(sublime_plugin.EventListener):
 
     # called when a different view is activated
     def on_activated(self, view):
+        
         window = view.window()
         if window:
             activeGroup = window.active_group()
             oldLayout = window.get_layout()
+            newLayout = deepcopy(oldLayout)
 
+            
             # 2 cells
             if len(oldLayout["cells"]) == 2:
                 # Columns: 2
                 if len(oldLayout["rows"]) == 2:
-                    oldLayout["cols"] = self.get_big(oldLayout["cols"], activeGroup)
-                    window.set_layout(oldLayout)
+                    newLayout["cols"] = self.get_big(oldLayout["cols"], activeGroup)
                 # Rows: 2
                 else:
-                    oldLayout["rows"] = self.get_big(oldLayout["rows"], activeGroup)
-                    window.set_layout(oldLayout)
+                    newLayout["rows"] = self.get_big(oldLayout["rows"], activeGroup)
 
             # 3 cells
             elif len(oldLayout["cells"]) == 3:
@@ -34,18 +36,17 @@ class ResizeActiveGroup(sublime_plugin.EventListener):
                 # Grid: 4
                 if len(oldLayout["rows"]) == 3 and len(oldLayout["cols"]) == 3:
                     if activeGroup == 0:
-                        oldLayout["cols"] = self.get_big(oldLayout["cols"], activeGroup)
-                        oldLayout["rows"] = self.get_big(oldLayout["rows"], activeGroup)
-                        window.set_layout(oldLayout)
+                        newLayout["cols"] = self.get_big(oldLayout["cols"], activeGroup)
+                        newLayout["rows"] = self.get_big(oldLayout["rows"], activeGroup)
                     elif activeGroup == 1:
-                        oldLayout["cols"] = self.get_big(oldLayout["cols"], activeGroup)
-                        oldLayout["rows"] = self.get_big(oldLayout["rows"], activeGroup - 1)
-                        window.set_layout(oldLayout)
+                        newLayout["cols"] = self.get_big(oldLayout["cols"], activeGroup)
+                        newLayout["rows"] = self.get_big(oldLayout["rows"], activeGroup - 1)
                     elif activeGroup == 2:
-                        oldLayout["cols"] = self.get_big(oldLayout["cols"], activeGroup - 2)
-                        oldLayout["rows"] = self.get_big(oldLayout["rows"], activeGroup - 1)
-                        window.set_layout(oldLayout)
+                        newLayout["cols"] = self.get_big(oldLayout["cols"], activeGroup - 2)
+                        newLayout["rows"] = self.get_big(oldLayout["rows"], activeGroup - 1)
                     elif activeGroup == 3:
-                        oldLayout["cols"] = self.get_big(oldLayout["cols"], activeGroup - 2)
-                        oldLayout["rows"] = self.get_big(oldLayout["rows"], activeGroup - 2)
-                        window.set_layout(oldLayout)
+                        newLayout["cols"] = self.get_big(oldLayout["cols"], activeGroup - 2)
+                        newLayout["rows"] = self.get_big(oldLayout["rows"], activeGroup - 2)
+
+            if oldLayout != newLayout:
+                window.set_layout(newLayout)
